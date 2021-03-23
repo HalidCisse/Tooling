@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.KeyVault;
@@ -16,7 +17,7 @@ namespace Tooling.KeyVaulter
         {
             var purgeExisting = false;
             var configs = new ConfigurationBuilder()
-                         .AddUserSecrets("tooling")
+                         .AddUserSecrets(Assembly.GetEntryAssembly())
                          .Build();
 
             var akvBaseUrl = Environment.GetEnvironmentVariable("KeyVault_BaseUrl", EnvironmentVariableTarget.Process);
@@ -30,7 +31,7 @@ namespace Tooling.KeyVaulter
                                                                              akvClientSecret))).AccessToken);
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (!purgeExisting)
+            if (purgeExisting)
             {
                 Console.WriteLine("###################### PURGING SECRETS  ##########################");
                 var secretItems = await kvClient.GetSecretsAsync(akvBaseUrl);
