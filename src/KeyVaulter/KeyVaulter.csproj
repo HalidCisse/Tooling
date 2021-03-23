@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(AppTargetFramework)</TargetFramework>
+    <UserSecretsId>tools</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="$(NetCoreVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="$(NetCoreVersion)" />
+  </ItemGroup>
+</Project>
