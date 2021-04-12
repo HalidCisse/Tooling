@@ -91,7 +91,7 @@ namespace Tooling.KeyVaulter
             }, maxThreadCount: 10);
 
 
-            static async Task ForEach<T>(IEnumerable<T> source, Func<T, Task> body, Action<T, Exception> onError = default, int maxThreadCount = 100)
+            static async Task ForEach<T>(IEnumerable<T> source, Func<T, Task> body, Action<T, Exception> onError = default, int maxThreadCount = 10)
             {
                 var guard = new SemaphoreSlim(maxThreadCount);
                 await Task.WhenAll(
@@ -117,7 +117,6 @@ namespace Tooling.KeyVaulter
 
             await Task.Delay(1_000);
             Console.WriteLine("###################### DONE ##########################");
-            Console.ReadKey();
         }
     }
 }
