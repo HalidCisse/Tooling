@@ -2,33 +2,31 @@
 
   <PropertyGroup>
 
-    <EnlistmentRoot>$(MSBuildThisFileDirectory)</EnlistmentRoot>
-    <MajorVersion>1</MajorVersion>
-    <MinorVersion>0</MinorVersion>
-
-    <Company>Microsoft Corp</Company>
+    <Company>Halid</Company>
     <Copyright>%A9 Halid Cisse. All rights reserved.</Copyright>
+    <license>MIT</license>
+    <PackageTags>tools,tool,visualStudio,sln</PackageTags>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageType>DotnetTool</PackageType>
 
-    <MajorVersion>1</MajorVersion>
-    <MinorVersion>0</MinorVersion>
+    <Revision>$([System.Math]::Truncate($([System.Decimal]::Remainder($([System.DateTime]::UtcNow.Subtract($([System.DateTime]::MinValue)).TotalSeconds), 100000))))</Revision>
 
+    <Version>0.1.$(Revision).0</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+
+    <RootNamespace>Tools.$(MSBuildProjectName)</RootNamespace>
+    <EnlistmentRoot>$(MSBuildThisFileDirectory)</EnlistmentRoot>
     <ArtifactsDir>$(MSBuildThisFileDirectory)\__artifacts\__bin\$(MSBuildProjectName)</ArtifactsDir>
-    
     <BaseOutputPath>$(ArtifactsDir)</BaseOutputPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)\__artifacts\__obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
-    
     <PublishDir>$(MSBuildThisFileDirectory)\__artifacts\__publish\$(MSBuildProjectName)</PublishDir>
-    
+    <PackageOutputPath>$(MSBuildThisFileDirectory)\__artifacts\__publish\nupkg</PackageOutputPath>
+    <PackageOutputPath Condition="'$(Configuration)' == 'Debug'">C:\packages</PackageOutputPath>
+
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-
-    <EnlistmentRoot>$(MSBuildThisFileDirectory)</EnlistmentRoot>
-    <RootNamespace>Tooling.$(MSBuildProjectName)</RootNamespace>
-
-    <PublishSingleFile>false</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <AppTargetFramework>net5.0</AppTargetFramework>
     <NetCoreVer>5.0.102</NetCoreVer>

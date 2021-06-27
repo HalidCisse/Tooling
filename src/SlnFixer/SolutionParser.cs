@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Tooling.Vs.Projects.Sanitizer
+namespace Tools.SlnFixer
 {
     public class SolutionParser
     {

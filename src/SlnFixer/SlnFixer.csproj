@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(AppTargetFramework)</TargetFramework>
+    
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>slnFixer</ToolCommandName>
+
+    <Description>Run this tool at your solution root to fix projects relative directories.</Description>
+  </PropertyGroup>
+
+</Project>

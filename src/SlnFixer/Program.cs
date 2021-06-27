@@ -5,19 +5,36 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace Tooling.Vs.Projects.Sanitizer
+namespace Tools.SlnFixer
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter solutionPath:");
-            var solutionPath = Console.ReadLine();
+            var currentDir = Directory.GetCurrentDirectory();
 
-            Console.WriteLine("Enter solutionPath:");
-            var solutionName = Console.ReadLine();
+#if DEBUG
+            currentDir = Directory.GetDirectories("C:\\Projects", "*", SearchOption.TopDirectoryOnly).ToList()[2];
+#endif
 
-            foreach (var projectFile in GetFiles($"C:\\Projects\\{solutionPath}\\src", ".csproj"))
+            var srcDir = Path.Combine(currentDir, "src");
+            var slnName = string.Empty;
+            var slns = GetFiles(currentDir, ".sln", SearchOption.TopDirectoryOnly).ToList();
+            if (slns.Count == 0 || slns.Count > 1)
+            {
+
+#if DEBUG
+                slnName = slns[1];
+#else
+                Console.WriteLine("Enter your sln name:");
+                slnName = Console.ReadLine();
+#endif
+            }
+
+            Console.WriteLine($"Fixing {slnName}");
+
+            // Make sure project name and project dir match
+            foreach (var projectFile in GetFiles(srcDir, ".csproj"))
             {
                 var projectName = Path.GetFileNameWithoutExtension(projectFile);
                 var projectDir = Path.GetDirectoryName(projectFile) ?? throw new ArgumentException();
@@ -39,8 +56,35 @@ namespace Tooling.Vs.Projects.Sanitizer
                 }
             }
 
-            var projects = GetFiles($"C:\\Projects\\{solutionPath}\\src", ".csproj")
-                .ToList();
+            // Make sure project is in right parent dir
+            foreach (var projectFile in GetFiles(srcDir, ".csproj"))
+            {
+                var projectName = Path.GetFileNameWithoutExtension(projectFile);
+                var projectSegments = projectName.Split('.');
+                if (projectSegments.Length < 2)
+                {
+                    continue;
+                }
+
+                var projectParentName = projectSegments[1];
+                var projectDir = Path.GetDirectoryName(projectFile) ?? throw new ArgumentException();
+                var expectedProjectDir = Path.Combine(srcDir, projectParentName, projectName);
+
+                if (projectDir != expectedProjectDir)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(Path.Combine(srcDir, projectParentName));
+                        Directory.Move(projectDir, expectedProjectDir);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+
+            var projects = GetFiles(srcDir, ".csproj").ToList();
 
             foreach (var projectFile in projects)
             {
@@ -70,7 +114,7 @@ namespace Tooling.Vs.Projects.Sanitizer
 
                         var referencedProjectName = Path.GetFileNameWithoutExtension(referencedProjectPath);
                         var referencePath         = $"{referencedProjectName}{Path.DirectorySeparatorChar}{referencedProjectName}.csproj";
-                        var solutionDir           = referencedProjectPath.Split(
+                        var slnDir           = referencedProjectPath.Split(
                                                     Path.DirectorySeparatorChar, 
                                                     StringSplitOptions.RemoveEmptyEntries)[^3];
                         var projectFileSolutionDir    = projectFile.Split(
@@ -78,9 +122,9 @@ namespace Tooling.Vs.Projects.Sanitizer
                             StringSplitOptions.RemoveEmptyEntries)[^3];
 
                         var basePath = "..\\";
-                        if (solutionDir != projectFileSolutionDir)
+                        if (slnDir != projectFileSolutionDir)
                         {
-                            basePath = $"..\\..\\{solutionDir}";
+                            basePath = $"..\\..\\{slnDir}";
                         }
                         
                         var projectFullName =
@@ -100,7 +144,7 @@ namespace Tooling.Vs.Projects.Sanitizer
                 projectDefinition.Save(projectFile, SaveOptions.OmitDuplicateNamespaces);
             }
 
-            var slnFile = $"C:\\Projects\\{solutionPath}\\{solutionName}";
+            var slnFile = Path.Combine(currentDir, slnName);
 
             var parser = new SolutionParser(slnFile);
             foreach( var project in parser.GetProjects() )

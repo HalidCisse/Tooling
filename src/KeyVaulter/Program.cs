@@ -9,7 +9,7 @@ using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
-namespace Tooling.KeyVaulter
+namespace Tools.KeyVaulter
 {
     public class Program
     {
